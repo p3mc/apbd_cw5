@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace LegacyRenewalApp
 {
@@ -38,8 +39,17 @@ namespace LegacyRenewalApp
         }
         
         // nie ma argumentow
-        
-        
+        public SubscriptionRenewalService() : this(
+            customerRepository: new CustomerRepository(), planRepository: new SubscriptionPlanRepository(), 
+            discountCalculator: new DiscountCalculator(new List<IDiscountPolicy>
+            {new SegmentDiscountPolicy(), new YearsDiscountPolicy(), new SizeDiscountPolicy(),new LoyaltyPointsDiscountPolicy()}),
+            supportFeeProvider: new PremiumSupportFeeProvider(), 
+            paymentFeeCalculator: new PaymentFeeCalculator(), taxCalculator: new CountryTaxCalculator(),
+            invoiceBuilder: new InvoiceBuilder(), billingGateway: new BillingGatewayAdapter(),
+            validator: new RenewalRequestValidator())
+        {
+        }
+
         public RenewalInvoice CreateRenewalInvoice(
             int customerId,
             string planCode,
